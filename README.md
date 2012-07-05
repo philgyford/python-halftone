@@ -2,7 +2,7 @@
 
 A python module that uses [PIL][pil] to give images a halftone effect.
 
-It is adapted from [this StackOverflow answer][so] by [fraxel][fr].
+It is adapted from [this StackOverflow answer][so] (which includes example images) by [fraxel][fr].
 
 [pil]: http://www.pythonware.com/products/pil/
 [so]: http://stackoverflow.com/questions/10572274/halftone-images-in-python/10575940#10575940
