@@ -1,0 +1,3 @@
+PIL==1.1.7
+distribute==0.6.19
+wsgiref==0.1.2
