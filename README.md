@@ -21,7 +21,7 @@ The full list of options:
 
 * `filename_addition`: What to add to the filename (before the extension) (default ``).
 * `sample`: Sample box size from original image, in pixels (default `10`).
-* `scale`: Max output dot diameter is `sample` * `scale` (which is also the number of possible dot sizes) (default `1`).
+* `scale`: Max output dot diameter is `sample * scale` (which is also the number of possible dot sizes) (default `1`).
 * `percentage`: How much of the gray component to remove from the CMY channels and put in the K channel (default `0`).
 * `angles`: A list of 4 angles that each screen channel should be rotated by (default `[0,15,30,45,]`).
 
