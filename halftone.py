@@ -1,4 +1,16 @@
-import Image, ImageDraw, ImageStat
+try:
+    import Image, ImageDraw, ImageStat
+except ImportError, e:
+
+    try:
+        import PIL.Image as Image
+        import PIL.ImageDraw as ImageDraw
+        import PIL.ImageStat as ImageStat
+    except:
+        raise
+except:
+    raise
+
 import os, sys
 
 """
@@ -95,4 +107,14 @@ class Halftone(object):
             half_tone = half_tone.crop((xx, yy, xx + im.size[0]*scale, yy + im.size[1]*scale))
             dots.append(half_tone)
         return dots
+
+if __name__ == '__main__': 
+
+    import sys
+    import halftone
+
+    path = sys.argv[1]
+
+    h = Halftone(path)
+    h.make(filename_addition='_halftoned')
 
