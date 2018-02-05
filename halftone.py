@@ -31,7 +31,7 @@ class Halftone(object):
         """
         self.path = path
 
-    def make(self, sample=10, scale=1, percentage=0, filename_addition='', angles=[0,15,30,45]):
+    def make(self, sample=10, scale=1, percentage=0, filename_addition='', angles=[0,15,30,45], style='color'):
         """
         Leave filename_addition empty to save the image in place.
         Arguments:
@@ -42,6 +42,7 @@ class Halftone(object):
                 channels and put in the K channel.
             filename_addition: What to add to the filename (before the extension).
             angles: A list of 4 angles that each screen channel should be rotated by.
+            style: 'color' or 'grayscale'.
         """
         f, e = os.path.splitext(self.path)
         outfile = "%s%s%s" % (f, filename_addition, e)
@@ -50,11 +51,17 @@ class Halftone(object):
         except IOError:
             raise
 
-        cmyk = self.gcr(im, percentage)
-        dots = self.halftone(im, cmyk, sample, scale, angles)
-        new = Image.merge('CMYK', dots)
-        new.save(outfile)
+        if style == 'grayscale':
+            angles = angles[:1]
+            gray_im = self.grayscale(im)
+            dots = self.halftone(im, gray_im, sample, scale, angles)
+            new = dots[0]
+        else:
+            cmyk = self.gcr(im, percentage)
+            dots = self.halftone(im, cmyk, sample, scale, angles)
+            new = Image.merge('CMYK', dots)
 
+        new.save(outfile)
 
     def gcr(self, im, percentage):
         """
