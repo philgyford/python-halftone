@@ -15,7 +15,7 @@ import os, sys
 
 """
 Class: Halftone( path )
-Usage: 
+Usage:
     import halftone
     h = halftone.Halftone('/path/to/image.jpg')
     h.make(filename_addition='_halftoned')
@@ -36,9 +36,9 @@ class Halftone(object):
         Leave filename_addition empty to save the image in place.
         Arguments:
             sample: Sample box size from original image, in pixels.
-            scale: Max output dot diameter is sample * scale (which is also the 
+            scale: Max output dot diameter is sample * scale (which is also the
                 number of possible dot sizes)
-            percentage: How much of the gray component to remove from the CMY 
+            percentage: How much of the gray component to remove from the CMY
                 channels and put in the K channel.
             filename_addition: What to add to the filename (before the extension).
             angles: A list of 4 angles that each screen channel should be rotated by.
@@ -48,7 +48,7 @@ class Halftone(object):
         try:
             im = Image.open(self.path)
         except IOError:
-            print "Cannot open ", self.path
+            raise
 
         cmyk = self.gcr(im, percentage)
         dots = self.halftone(im, cmyk, sample, scale, angles)
@@ -58,7 +58,7 @@ class Halftone(object):
 
     def gcr(self, im, percentage):
         """
-        Basic "Gray Component Replacement" function. Returns a CMYK image with 
+        Basic "Gray Component Replacement" function. Returns a CMYK image with
         percentage gray component removed from the CMY channels and put in the
         K channel, ie. for percentage=100, (41, 100, 255, 0) >> (0, 59, 214, 41)
         """
@@ -79,10 +79,10 @@ class Halftone(object):
 
 
     def halftone(self, im, cmyk, sample, scale, angles):
-        '''Returns list of half-tone images for cmyk image. sample (pixels), 
-           determines the sample box size from the original image. The maximum 
-           output dot diameter is given by sample * scale (which is also the number 
-           of possible dot sizes). So sample=1 will presevere the original image 
+        '''Returns list of half-tone images for cmyk image. sample (pixels),
+           determines the sample box size from the original image. The maximum
+           output dot diameter is given by sample * scale (which is also the number
+           of possible dot sizes). So sample=1 will presevere the original image
            resolution, but scale must be >1 to allow variation in dot size.'''
         cmyk = cmyk.split()
         dots = []
@@ -108,7 +108,7 @@ class Halftone(object):
             dots.append(half_tone)
         return dots
 
-if __name__ == '__main__': 
+if __name__ == '__main__':
 
     import sys
     import halftone
@@ -117,4 +117,3 @@ if __name__ == '__main__':
 
     h = Halftone(path)
     h.make(filename_addition='_halftoned')
-
