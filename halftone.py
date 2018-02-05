@@ -51,11 +51,13 @@ class Halftone(object):
         except IOError:
             raise
 
+
         if style == 'grayscale':
             angles = angles[:1]
-            gray_im = self.grayscale(im)
+            gray_im = im.convert('L')
             dots = self.halftone(im, gray_im, sample, scale, angles)
             new = dots[0]
+
         else:
             cmyk = self.gcr(im, percentage)
             dots = self.halftone(im, cmyk, sample, scale, angles)
