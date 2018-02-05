@@ -36,7 +36,7 @@ An example of `make()` using all options:
 		scale=1,
 		percentage=50,
 		angles[108, 162, 90, 45],
-        style='color',
+		style='color',
 	)
 
 Running it over large images, or with settings that create large images, can take some time.
