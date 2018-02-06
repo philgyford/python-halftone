@@ -102,18 +102,47 @@ class Halftone(object):
             draw = ImageDraw.Draw(half_tone)
             for x in xrange(0, channel.size[0], sample):
                 for y in xrange(0, channel.size[1], sample):
+
+                    # Area we sample to get the level:
                     box = channel.crop((x, y, x + sample, y + sample))
-                    stat = ImageStat.Stat(box)
-                    diameter = (stat.mean[0] / 255)**0.5
-                    edge = 0.5*(1-diameter)
-                    x_pos, y_pos = (x+edge)*scale, (y+edge)*scale
-                    box_edge = sample*diameter*scale
-                    draw.ellipse((x_pos, y_pos, x_pos + box_edge, y_pos + box_edge), fill=255)
+
+                    # The average level for that box (0-255):
+                    mean = ImageStat.Stat(box).mean[0]
+
+                    # The diameter of the circle to draw based on the mean (0-1):
+                    diameter = (mean / 255) ** 0.5
+
+                    # Size of the box we'll draw the circle in:
+                    box_size = sample * scale
+
+                    # Diameter of circle we'll draw:
+                    # If sample=10 and scale=1 then this is (0-10)
+                    draw_diameter = diameter * box_size
+
+                    # Position of top-left of box we'll draw the circle in:
+                    # x_pos, y_pos = (x * scale), (y * scale)
+                    box_x, box_y = (x * scale), (y * scale)
+
+                    # Positioned of top-left and bottom-right of circle:
+                    # A maximum-sized circle will have its edges at the edges
+                    # of the draw box.
+                    x1 = box_x + ((box_size - draw_diameter) / 2)
+                    y1 = box_y + ((box_size - draw_diameter) / 2)
+                    x2 = x1 + draw_diameter
+                    y2 = y1 + draw_diameter
+
+                    draw.ellipse([(x1, y1), (x2, y2)], fill=255)
+
             half_tone = half_tone.rotate(-angle, expand=1)
             width_half, height_half = half_tone.size
-            xx=(width_half-im.size[0]*scale) / 2
-            yy=(height_half-im.size[1]*scale) / 2
-            half_tone = half_tone.crop((xx, yy, xx + im.size[0]*scale, yy + im.size[1]*scale))
+            xx = (width_half - im.size[0] * scale) / 2
+            yy = (height_half - im.size[1] * scale) / 2
+            half_tone = half_tone.crop((
+                            xx,
+                            yy,
+                            xx + im.size[0] * scale,
+                            yy + im.size[1] * scale
+                        ))
             dots.append(half_tone)
         return dots
 
