@@ -18,7 +18,7 @@ Class: Halftone( path )
 Usage:
     import halftone
     h = halftone.Halftone('/path/to/image.jpg')
-    h.make(filename_addition='_halftoned')
+    h.make()
 
 The bulk of this is taken from this Stack Overflow answer by fraxel:
 http://stackoverflow.com/a/10575940/250962
@@ -31,7 +31,7 @@ class Halftone(object):
         """
         self.path = path
 
-    def make(self, sample=10, scale=1, percentage=0, filename_addition='', angles=[0,15,30,45], style='color', antialias=False):
+    def make(self, sample=10, scale=1, percentage=0, filename_addition='_halftoned', angles=[0,15,30,45], style='color', antialias=False):
         """
         Leave filename_addition empty to save the image in place.
         Arguments:
