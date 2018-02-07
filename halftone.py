@@ -89,7 +89,6 @@ class Halftone(object):
                 cmyk[3][x,y] = gray
         return Image.merge('CMYK', cmyk_im)
 
-
     def halftone(self, im, cmyk, sample, scale, angles, antialias):
         """
         Returns list of half-tone images for cmyk image. sample (pixels),
@@ -180,4 +179,4 @@ if __name__ == '__main__':
     path = sys.argv[1]
 
     h = Halftone(path)
-    h.make(filename_addition='_halftoned')
+    h.make()
