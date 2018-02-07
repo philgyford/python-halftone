@@ -27,7 +27,7 @@ The full list of options:
 
 ### `angles`
 
-A list of 4 angles, in degrees, that each channel should be rotated by. If `style='grayscale'` only the first angle is used. Experimenting with different angles can increase or reduce moiré patterns.
+A list of 4 angles, in degrees, that each channel (CMYK, in that order) should be rotated by. If `style='grayscale'` only the first angle is used. Experimenting with different angles can increase or reduce moiré patterns. [More on screen angles.](http://the-print-guide.blogspot.co.uk/2009/05/halftone-screen-angles.html)
 
 Default: `[0,15,30,45]`
 
@@ -72,7 +72,7 @@ Default: `'color'`
 An example of `make()` using all options:
 
 	h.make(
-		angles=[108, 162, 90, 45],
+		angles=[15, 75, 0, 45],
 		antialias=True,
 		filename_addition='_new',
 		percentage=50,
@@ -80,3 +80,50 @@ An example of `make()` using all options:
 		scale=2,
 		style='color'
 	)
+
+See the `examples/` directory for the example images below.
+
+### Original image
+
+![Original image of dog](examples/original.jpg?raw=True)
+
+Other than the `filename_addition` option, the images below have been created
+using the options specified.
+
+### Default settings
+
+    h.make()
+
+![Original image of dog](examples/defaults.jpg?raw=True)
+
+### Custom screen angles
+
+Using different screen angles to reduce moiré (but resulting in a different pattern).
+
+    h.make(angles=[15, 45, 0, 75])
+
+![Image of dog with custom screen angles](examples/angles.jpg?raw=True)
+
+### Smaller sample
+
+Reducing the sample size and increasing the scale (to increase output detail).
+
+    im.make(sample=5, scale=2)
+
+![Image of dog with smaller sample size](examples/sample_scale.jpg?raw=True)
+
+### Antialias
+
+With antialiased circles.
+
+    im.make(antialias=True)
+
+![Antialiased image of dog](examples/antialiased.jpg?raw=True)
+
+### Grayscale
+
+Black and white, setting the angle to 45 (the default angle would be 0, resulting in circles being in rows and columns).
+
+    im.make(style='grayscale', angles=[45])
+
+![Grayscale image of dog](examples/grayscale.jpg?raw=True)
