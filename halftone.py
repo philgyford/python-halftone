@@ -31,7 +31,7 @@ class Halftone(object):
         """
         self.path = path
 
-    def make(self, sample=10, scale=1, percentage=0, filename_addition='', angles=[0,15,30,45], style='color'):
+    def make(self, sample=10, scale=1, percentage=0, filename_addition='', angles=[0,15,30,45], style='color', antialias=False):
         """
         Leave filename_addition empty to save the image in place.
         Arguments:
@@ -43,6 +43,7 @@ class Halftone(object):
             filename_addition: What to add to the filename (before the extension).
             angles: A list of 4 angles that each screen channel should be rotated by.
             style: 'color' or 'grayscale'.
+            antialias: boolean.
         """
         f, e = os.path.splitext(self.path)
         outfile = "%s%s%s" % (f, filename_addition, e)
@@ -51,16 +52,15 @@ class Halftone(object):
         except IOError:
             raise
 
-
         if style == 'grayscale':
             angles = angles[:1]
             gray_im = im.convert('L')
-            dots = self.halftone(im, gray_im, sample, scale, angles)
+            dots = self.halftone(im, gray_im, sample, scale, angles, antialias)
             new = dots[0]
 
         else:
             cmyk = self.gcr(im, percentage)
-            dots = self.halftone(im, cmyk, sample, scale, angles)
+            dots = self.halftone(im, cmyk, sample, scale, angles, antialias)
             new = Image.merge('CMYK', dots)
 
         new.save(outfile)
@@ -87,19 +87,35 @@ class Halftone(object):
         return Image.merge('CMYK', cmyk_im)
 
 
-    def halftone(self, im, cmyk, sample, scale, angles):
-        '''Returns list of half-tone images for cmyk image. sample (pixels),
-           determines the sample box size from the original image. The maximum
-           output dot diameter is given by sample * scale (which is also the number
-           of possible dot sizes). So sample=1 will presevere the original image
-           resolution, but scale must be >1 to allow variation in dot size.'''
+    def halftone(self, im, cmyk, sample, scale, angles, antialias):
+        """
+        Returns list of half-tone images for cmyk image. sample (pixels),
+        determines the sample box size from the original image. The maximum
+        output dot diameter is given by sample * scale (which is also the number
+        of possible dot sizes). So sample=1 will presevere the original image
+        resolution, but scale must be >1 to allow variation in dot size.
+        """
+
+        # If we're antialiasing, we'll multiply the size of the image by this
+        # scale while drawing, and then scale it back down again afterwards.
+        # Because drawing isn't aliased, so drawing big and scaling back down
+        # is the only way to get antialiasing from PIL/Pillow.
+        antialias_scale = 4
+
+        if antialias is True:
+            scale = scale * antialias_scale
+
         cmyk = cmyk.split()
         dots = []
+
         for channel, angle in zip(cmyk, angles):
             channel = channel.rotate(angle, expand=1)
-            size = channel.size[0]*scale, channel.size[1]*scale
+            size = channel.size[0] * scale, channel.size[1] * scale
             half_tone = Image.new('L', size)
             draw = ImageDraw.Draw(half_tone)
+
+            # Cycle through one sample point at a time, drawing a circle for
+            # each one:
             for x in xrange(0, channel.size[0], sample):
                 for y in xrange(0, channel.size[1], sample):
 
@@ -135,14 +151,21 @@ class Halftone(object):
 
             half_tone = half_tone.rotate(-angle, expand=1)
             width_half, height_half = half_tone.size
-            xx = (width_half - im.size[0] * scale) / 2
-            yy = (height_half - im.size[1] * scale) / 2
-            half_tone = half_tone.crop((
-                            xx,
-                            yy,
-                            xx + im.size[0] * scale,
-                            yy + im.size[1] * scale
-                        ))
+
+            # Top-left and bottom-right of the image to crop to:
+            xx1 = (width_half - im.size[0] * scale) / 2
+            yy1 = (height_half - im.size[1] * scale) / 2
+            xx2 = xx1 + im.size[0] * scale
+            yy2 = yy2 + im.size[1] * scale
+
+            half_tone = half_tone.crop((xx1, yy1, xx2, yy2))
+
+            if antialias is True:
+                # Scale it back down to antialias the image.
+                w = (xx2 - xx1) / antialias_scale
+                h = (yy2 - yy1) / antialias_scale
+                half_tone = half_tone.resize((w, h), resample=Image.LANCZOS)
+
             dots.append(half_tone)
         return dots
 
