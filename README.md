@@ -10,7 +10,7 @@ It is adapted from [this StackOverflow answer][so] (which includes example image
 
 Running it over large images, or with settings that create large images, can take some time.
 
-## Basic usage
+## Basic usage
 
     import halftone
     h = halftone.Halftone('/path/to/myimage.jpg')
@@ -19,6 +19,7 @@ Running it over large images, or with settings that create large images, can tak
 Will create a new image at `/path/to/myimage_halftoned.jpg`, using the default settings.
 
 ## Options
+
 There are a number of options that can be added to the `make()` call, e.g.:
 
 	h.make(filename_addition='_new', scale=2)
