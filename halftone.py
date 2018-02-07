@@ -159,7 +159,7 @@ class Halftone(object):
             xx1 = (width_half - im.size[0] * scale) / 2
             yy1 = (height_half - im.size[1] * scale) / 2
             xx2 = xx1 + im.size[0] * scale
-            yy2 = yy2 + im.size[1] * scale
+            yy2 = yy1 + im.size[1] * scale
 
             half_tone = half_tone.crop((xx1, yy1, xx2, yy2))
 
