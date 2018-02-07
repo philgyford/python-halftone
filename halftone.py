@@ -25,6 +25,7 @@ http://stackoverflow.com/a/10575940/250962
 """
 
 class Halftone(object):
+
     def __init__(self, path):
         """
         path is the path to the image we want to halftone.
@@ -46,7 +47,9 @@ class Halftone(object):
             antialias: boolean.
         """
         f, e = os.path.splitext(self.path)
+
         outfile = "%s%s%s" % (f, filename_addition, e)
+
         try:
             im = Image.open(self.path)
         except IOError:
