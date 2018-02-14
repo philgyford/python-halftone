@@ -10,6 +10,8 @@ It is adapted from [this StackOverflow answer][so] (which includes example image
 
 Running it over large images, or with settings that create large images, can take some time.
 
+Also see [Clay Flannigan's halftone](https://github.com/ClayFlannigan/halftone) in case that suits your needs better.
+
 ## Basic usage
 
     import halftone
