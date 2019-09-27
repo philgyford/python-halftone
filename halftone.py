@@ -1,6 +1,6 @@
 try:
     import Image, ImageDraw, ImageStat
-except ImportError, e:
+except ImportError as e:
 
     try:
         import PIL.Image as Image
@@ -79,12 +79,12 @@ class Halftone(object):
             return cmyk_im
         cmyk_im = cmyk_im.split()
         cmyk = []
-        for i in xrange(4):
+        for i in range(4):
             cmyk.append(cmyk_im[i].load())
-        for x in xrange(im.size[0]):
-            for y in xrange(im.size[1]):
+        for x in range(im.size[0]):
+            for y in range(im.size[1]):
                 gray = min(cmyk[0][x,y], cmyk[1][x,y], cmyk[2][x,y]) * percentage / 100
-                for i in xrange(3):
+                for i in range(3):
                     cmyk[i][x,y] = cmyk[i][x,y] - gray
                 cmyk[3][x,y] = gray
         return Image.merge('CMYK', cmyk_im)
@@ -118,8 +118,8 @@ class Halftone(object):
 
             # Cycle through one sample point at a time, drawing a circle for
             # each one:
-            for x in xrange(0, channel.size[0], sample):
-                for y in xrange(0, channel.size[1], sample):
+            for x in range(0, channel.size[0], sample):
+                for y in range(0, channel.size[1], sample):
 
                     # Area we sample to get the level:
                     box = channel.crop((x, y, x + sample, y + sample))
