@@ -24,15 +24,24 @@ The bulk of this is taken from this Stack Overflow answer by fraxel:
 http://stackoverflow.com/a/10575940/250962
 """
 
-class Halftone(object):
 
+class Halftone(object):
     def __init__(self, path):
         """
         path is the path to the image we want to halftone.
         """
         self.path = path
 
-    def make(self, sample=10, scale=1, percentage=0, filename_addition='_halftoned', angles=[0,15,30,45], style='color', antialias=False):
+    def make(
+        self,
+        sample=10,
+        scale=1,
+        percentage=0,
+        filename_addition="_halftoned",
+        angles=[0, 15, 30, 45],
+        style="color",
+        antialias=False,
+    ):
         """
         Leave filename_addition empty to save the image in place.
         Arguments:
@@ -55,16 +64,16 @@ class Halftone(object):
         except IOError:
             raise
 
-        if style == 'grayscale':
+        if style == "grayscale":
             angles = angles[:1]
-            gray_im = im.convert('L')
+            gray_im = im.convert("L")
             dots = self.halftone(im, gray_im, sample, scale, angles, antialias)
             new = dots[0]
 
         else:
             cmyk = self.gcr(im, percentage)
             dots = self.halftone(im, cmyk, sample, scale, angles, antialias)
-            new = Image.merge('CMYK', dots)
+            new = Image.merge("CMYK", dots)
 
         new.save(outfile)
 
@@ -74,7 +83,7 @@ class Halftone(object):
         percentage gray component removed from the CMY channels and put in the
         K channel, ie. for percentage=100, (41, 100, 255, 0) >> (0, 59, 214, 41)
         """
-        cmyk_im = im.convert('CMYK')
+        cmyk_im = im.convert("CMYK")
         if not percentage:
             return cmyk_im
         cmyk_im = cmyk_im.split()
@@ -83,11 +92,13 @@ class Halftone(object):
             cmyk.append(cmyk_im[i].load())
         for x in xrange(im.size[0]):
             for y in xrange(im.size[1]):
-                gray = min(cmyk[0][x,y], cmyk[1][x,y], cmyk[2][x,y]) * percentage / 100
+                gray = (
+                    min(cmyk[0][x, y], cmyk[1][x, y], cmyk[2][x, y]) * percentage / 100
+                )
                 for i in xrange(3):
-                    cmyk[i][x,y] = cmyk[i][x,y] - gray
-                cmyk[3][x,y] = gray
-        return Image.merge('CMYK', cmyk_im)
+                    cmyk[i][x, y] = cmyk[i][x, y] - gray
+                cmyk[3][x, y] = gray
+        return Image.merge("CMYK", cmyk_im)
 
     def halftone(self, im, cmyk, sample, scale, angles, antialias):
         """
@@ -113,7 +124,7 @@ class Halftone(object):
         for channel, angle in zip(cmyk, angles):
             channel = channel.rotate(angle, expand=1)
             size = channel.size[0] * scale, channel.size[1] * scale
-            half_tone = Image.new('L', size)
+            half_tone = Image.new("L", size)
             draw = ImageDraw.Draw(half_tone)
 
             # Cycle through one sample point at a time, drawing a circle for
@@ -171,7 +182,8 @@ class Halftone(object):
             dots.append(half_tone)
         return dots
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
 
     import sys
     import halftone
