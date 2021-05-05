@@ -58,6 +58,12 @@ When creating each circle in the new image, what area of pixels should that circ
 
 Default: `10`
 
+### `save_channels`
+
+A boolean value, whether to also save each of the four CMYK channels as separate images. If so, the files will have the letter appended to the filename, like `puppy_halftoned_c.jpg`.
+
+Default: `False`
+
 ### `scale`
 
 Scale of the output image. The maximum output dot diameter is `sample * scale` (which is also the number of possible dot sizes).

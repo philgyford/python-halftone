@@ -1,7 +1,7 @@
 import os
 import sys
 
-from PIL import Image, ImageDraw, ImageStat
+from PIL import Image, ImageDraw, ImageOps, ImageStat
 
 """
 Class: Halftone( path )
@@ -31,6 +31,7 @@ class Halftone(object):
         angles=[0, 15, 30, 45],
         style="color",
         antialias=False,
+        save_channels=False,
     ):
         """
         Leave filename_addition empty to save the image in place.
@@ -44,10 +45,11 @@ class Halftone(object):
             angles: A list of 4 angles that each screen channel should be rotated by.
             style: 'color' or 'grayscale'.
             antialias: boolean.
+            save_channels: boolean. Also save the four separate CMYK channels as images?
         """
         f, e = os.path.splitext(self.path)
 
-        outfile = "%s%s%s" % (f, filename_addition, e)
+        filename = "%s%s%s" % (f, filename_addition, e)
 
         try:
             im = Image.open(self.path)
@@ -57,15 +59,29 @@ class Halftone(object):
         if style == "grayscale":
             angles = angles[:1]
             gray_im = im.convert("L")
-            dots = self.halftone(im, gray_im, sample, scale, angles, antialias)
-            new = dots[0]
+            channel_images = self.halftone(
+                im, gray_im, sample, scale, angles, antialias
+            )
+            new = channel_images[0]
 
         else:
             cmyk = self.gcr(im, percentage)
-            dots = self.halftone(im, cmyk, sample, scale, angles, antialias)
-            new = Image.merge("CMYK", dots)
+            channel_images = self.halftone(im, cmyk, sample, scale, angles, antialias)
+            if save_channels:
+                # Save the individual CMYK channels as separate images.
+                extensions = ["c", "m", "y", "k"]
+                for count, dot in enumerate(channel_images):
+                    dot_inverted = ImageOps.invert(dot)
+                    channel_filename = "%s%s_%s%s" % (
+                        f,
+                        filename_addition,
+                        extensions[count],
+                        e,
+                    )
+                    dot_inverted.save(channel_filename)
+            new = Image.merge("CMYK", channel_images)
 
-        new.save(outfile)
+        new.save(filename)
 
     def gcr(self, im, percentage):
         """
