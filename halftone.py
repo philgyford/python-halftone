@@ -67,6 +67,7 @@ class Halftone(object):
         else:
             cmyk = self.gcr(im, percentage)
             channel_images = self.halftone(im, cmyk, sample, scale, angles, antialias)
+
             if save_channels in ["color", "grayscale"]:
                 # Save the individual CMYK channels as separate images.
                 channel_names = (
@@ -87,6 +88,7 @@ class Halftone(object):
                         i = ImageOps.colorize(
                             i, black=channel_names[count][1], white="white"
                         )
+                    i = i.convert("CMYK")
                     i.save(channel_filename)
             new = Image.merge("CMYK", channel_images)
 
