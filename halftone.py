@@ -31,7 +31,7 @@ class Halftone(object):
         angles=[0, 15, 30, 45],
         style="color",
         antialias=False,
-        save_channels=False,
+        save_channels=None,
     ):
         """
         Leave filename_addition empty to save the image in place.
@@ -67,18 +67,27 @@ class Halftone(object):
         else:
             cmyk = self.gcr(im, percentage)
             channel_images = self.halftone(im, cmyk, sample, scale, angles, antialias)
-            if save_channels:
+            if save_channels in ["color", "grayscale"]:
                 # Save the individual CMYK channels as separate images.
-                extensions = ["c", "m", "y", "k"]
-                for count, dot in enumerate(channel_images):
-                    dot_inverted = ImageOps.invert(dot)
+                channel_names = (
+                    ("c", "cyan"),
+                    ("m", "magenta"),
+                    ("y", "yellow"),
+                    ("k", "black"),
+                )
+                for count, channel_img in enumerate(channel_images):
                     channel_filename = "%s%s_%s%s" % (
                         f,
                         filename_addition,
-                        extensions[count],
+                        channel_names[count][0],
                         e,
                     )
-                    dot_inverted.save(channel_filename)
+                    i = ImageOps.invert(channel_img)
+                    if save_channels == "color" and count < 3:
+                        i = ImageOps.colorize(
+                            i, black=channel_names[count][1], white="white"
+                        )
+                    i.save(channel_filename)
             new = Image.merge("CMYK", channel_images)
 
         new.save(filename)

@@ -60,9 +60,9 @@ Default: `10`
 
 ### `save_channels`
 
-A boolean value, whether to also save each of the four CMYK channels as separate images. If so, the files will have the letter appended to the filename, like `puppy_halftoned_c.jpg`.
+Whether to also save each of the four CMYK channels as separate images. If `None`, then this isn't done. If `"color"` four extra files will be saved, one per channel. If `"grayscale"`, then the same but each of those channel files will be grayscale. The files will have the color letter appended to the filename, like `puppy_halftoned_c.jpg` for the cyan channel.
 
-Default: `False`
+Default: `None`
 
 ### `scale`
 
