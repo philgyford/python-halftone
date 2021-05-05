@@ -3,7 +3,10 @@
 
 ## [Unreleased]
 
--
+* Added `save_channels` option.
+
+* Bug fixes
+
 
 ## [2.0.1] - 2021-05-03
 
