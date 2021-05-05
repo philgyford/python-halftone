@@ -4,19 +4,23 @@ A Python 3 module that uses [Pillow][pillow] to give images a halftone effect (s
 
 It is adapted from [this StackOverflow answer][so] (which includes example images) by [fraxel][fr].
 
+Running it over large images, or with settings that create large images, can take some time.
+
+Also see [Clay Flannigan's halftone][clay] in case that suits your needs better.
+
 [pillow]: http://pillow.readthedocs.io
 [so]: http://stackoverflow.com/questions/10572274/halftone-images-in-python/10575940#10575940
 [fr]: http://stackoverflow.com/users/1175101/fraxel
-
-Running it over large images, or with settings that create large images, can take some time.
-
-Also see [Clay Flannigan's halftone](https://github.com/ClayFlannigan/halftone) in case that suits your needs better.
+[clay]: https://github.com/ClayFlannigan/halftone
 
 ## Basic usage
 
-    import halftone
-    h = halftone.Halftone('/path/to/myimage.jpg')
-    h.make()
+```python
+import halftone
+
+h = halftone.Halftone("/path/to/myimage.jpg")
+h.make()
+```
 
 Will create a new image at `/path/to/myimage_halftoned.jpg`, using the default settings.
 
@@ -24,15 +28,17 @@ Will create a new image at `/path/to/myimage_halftoned.jpg`, using the default s
 
 There are a number of options that can be added to the `make()` call, e.g.:
 
-	h.make(filename_addition='_new', scale=2)
+```python
+h.make(filename_addition="_new", scale=2)
+```
 
 The full list of options:
 
 ### `angles`
 
-A list of 4 angles, in degrees, that each channel (CMYK, in that order) should be rotated by. If `style='grayscale'` only the first angle is used. Experimenting with different angles can increase or reduce moiré patterns. [More on screen angles.](http://the-print-guide.blogspot.co.uk/2009/05/halftone-screen-angles.html)
+A list of 4 angles, in degrees, that each channel (CMYK, in that order) should be rotated by. If `style="grayscale"` only the first angle is used. Experimenting with different angles can increase or reduce moiré patterns. [More on screen angles.](http://the-print-guide.blogspot.co.uk/2009/05/halftone-screen-angles.html)
 
-Default: `[0,15,30,45]`
+Default: `[0, 15, 30, 45]`
 
 ### `antialias`
 
@@ -42,7 +48,7 @@ Default: `False`
 
 ### `filename_addition`
 
-When saving the new image, this string will be added to the original filename. e.g. if the original filename is `puppy.jpg` and `filename_addition='_halftoned'`, the saved file will be `puppy_halftoned.jpg`.
+When saving the new image, this string will be added to the original filename. e.g. if the original filename is `"puppy.jpg"` and `filename_addition="_new"`, the saved file will be `"puppy_new.jpg"`.
 
 Default: `"_halftoned"`
 
@@ -60,7 +66,7 @@ Default: `10`
 
 ### `save_channels`
 
-Whether to also save each of the four CMYK channels as separate images. If `None`, then this isn't done. If `"color"` four extra files will be saved, one per channel. If `"grayscale"`, then the same but each of those channel files will be grayscale. The files will have the color letter appended to the filename, like `puppy_halftoned_c.jpg` for the cyan channel.
+Either `None`, `"color"` or `"grayscale"`. Whether to also save each of the four CMYK channels as separate images. If `None`, then this isn't done. If `save_channels="color"` four extra files will be saved, one per channel. If `save_channels="grayscale"`, then the same but each of those channel files will be grayscale. The files will have the color letter appended to the filename, like `puppy_halftoned_c.jpg` for the cyan channel. Has no effect if `style="grayscale"`.
 
 Default: `None`
 
@@ -72,23 +78,26 @@ Default `1`
 
 ### `style`
 
-Either `'color'` or `'grayscale'`. For color, four screens are output, one each for cyan, magenta, yellow and black. For grayscale, only black dots are generated, only the first number in the `angles` list is used, and the `percentage` value is ignored.
+Either `"color"` or `"grayscale"`. For color, four screens are output, one each for cyan, magenta, yellow and black. For grayscale, only black dots are generated, only the first number in the `angles` list is used, and the `percentage` value is ignored.
 
-Default: `'color'`
+Default: `"color"`
 
 ## Examples
 
 An example of `make()` using all options:
 
-	h.make(
-		angles=[15, 75, 0, 45],
-		antialias=True,
-		filename_addition='_new',
-		percentage=50,
-		sample=5,
-		scale=2,
-		style='color'
-	)
+```python
+h.make(
+    angles=[15, 75, 0, 45],
+    antialias=True,
+    filename_addition="_new",
+    percentage=50,
+    sample=5,
+    save_channels="color",
+    scale=2,
+    style="color"
+)
+```
 
 See the `examples/` directory for the example images below.
 
@@ -101,7 +110,9 @@ using the options specified.
 
 ### Default settings
 
-    h.make()
+```python
+h.make()
+```
 
 ![Original image of dog](examples/defaults.jpg?raw=True)
 
@@ -109,7 +120,9 @@ using the options specified.
 
 Using different screen angles to reduce moiré (but resulting in a different pattern).
 
-    h.make(angles=[15, 45, 0, 75])
+```python
+h.make(angles=[15, 45, 0, 75])
+```
 
 ![Image of dog with custom screen angles](examples/angles.jpg?raw=True)
 
@@ -117,7 +130,9 @@ Using different screen angles to reduce moiré (but resulting in a different pat
 
 Reducing the sample size and increasing the scale (to increase output detail).
 
-    im.make(sample=5, scale=2)
+```python
+im.make(sample=5, scale=2)
+```
 
 ![Image of dog with smaller sample size](examples/sample_scale.jpg?raw=True)
 
@@ -125,7 +140,9 @@ Reducing the sample size and increasing the scale (to increase output detail).
 
 With antialiased circles.
 
-    im.make(antialias=True)
+```python
+im.make(antialias=True)
+```
 
 ![Antialiased image of dog](examples/antialiased.jpg?raw=True)
 
@@ -133,6 +150,8 @@ With antialiased circles.
 
 Black and white, setting the angle to 45 (the default angle would be 0, resulting in circles being in rows and columns).
 
-    im.make(style='grayscale', angles=[45])
+```python
+im.make(style="grayscale", angles=[45])
+```
 
 ![Grayscale image of dog](examples/grayscale.jpg?raw=True)
