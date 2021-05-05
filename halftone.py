@@ -82,7 +82,7 @@ class Halftone(object):
             cmyk.append(cmyk_im[i].load())
         for x in range(im.size[0]):
             for y in range(im.size[1]):
-                gray = (
+                gray = int(
                     min(cmyk[0][x, y], cmyk[1][x, y], cmyk[2][x, y]) * percentage / 100
                 )
                 for i in range(3):
