@@ -55,9 +55,22 @@ class Halftone(object):
             save_channels_style: "color" or "grayscale".
         """
 
+        self.check_arguments(
+            angles=angles,
+            antialias=antialias,
+            output_quality=output_quality,
+            percentage=percentage,
+            sample=sample,
+            save_channels=save_channels,
+            save_channels_format=save_channels_format,
+            save_channels_style=save_channels_style,
+            scale=scale,
+            style=style,
+        )
+
         f, extension = os.path.splitext(self.path)
 
-        output_filename = "%s%s%s" % (f, filename_addition, extension)
+        output_filename = "%s%s%s" % (f, str(filename_addition), extension)
 
         try:
             im = Image.open(self.path)
@@ -90,50 +103,90 @@ class Halftone(object):
 
         new.save(output_filename)
 
-    def save_channel_images(
+    def check_arguments(
         self,
-        channel_images,
-        channels_style,
-        channels_format,
-        output_filename,
+        angles,
+        antialias,
         output_quality,
+        percentage,
+        sample,
+        save_channels,
+        save_channels_format,
+        save_channels_style,
+        scale,
+        style,
     ):
-        """
-        Save the individual CMYK channels as separate images.
-        """
+        "Checks all the arguments are valid. Raises TypeError or ValueError if not."
 
-        channel_names = (
-            ("c", "cyan"),
-            ("m", "magenta"),
-            ("y", "yellow"),
-            ("k", "black"),
-        )
+        if not isinstance(angles, list):
+            raise TypeError(
+                "The angles argument must be a list of 4 integers, not '%s'." % angles
+            )
+        if len(angles) != 4:
+            raise ValueError(
+                "The angles argument must be a list of 4 integers, but it has %s."
+                % len(angles)
+            )
+        for a in angles:
+            if not isinstance(a, int):
+                raise ValueError(
+                    "All four elements of the angles list must be integers, "
+                    "but it is %s." % angles
+                )
 
-        f, extension = os.path.splitext(output_filename)
-
-        if channels_format == "jepg":
-            extension = ".jpg"
-        elif channels_format.startswith("png"):
-            extension = ".png"
-        # Else, keep the same as the input file.
-
-        for count, channel_img in enumerate(channel_images):
-            channel_filename = "%s_%s%s" % (
-                f,
-                channel_names[count][0],
-                extension,
+        if not isinstance(antialias, bool):
+            raise TypeError(
+                "The antialias argument must be a boolean, not '%s'." % antialias
             )
 
-            i = ImageOps.invert(channel_img)
+        if not isinstance(output_quality, int):
+            raise TypeError(
+                "The output_quality argument must be an integer, not '%s'."
+                % output_quality
+            )
+        if output_quality < 0 or output_quality > 100:
+            raise ValueError(
+                "The output_quality argument must be between 0 and 100, but it is %s."
+                % output_quality
+            )
 
-            if channels_style == "color" and count < 3:
-                i = ImageOps.colorize(i, black=channel_names[count][1], white="white")
+        if not isinstance(percentage, (float, int)):
+            raise TypeError(
+                "The percentage argument must be an integer or float, not '%s'."
+                % percentage
+            )
 
-            if extension == ".jpg":
-                # subsampling=0 seems to make them look crisper.
-                i.save(channel_filename, "JPEG", subsampling=0, quality=output_quality)
-            elif extension == ".png":
-                i.save(channel_filename, "PNG")
+        if not isinstance(sample, int):
+            raise TypeError(
+                "The sample argument must be an integer, not '%s'." % sample
+            )
+
+        if not isinstance(save_channels, bool):
+            raise TypeError(
+                "The save_channels argument must be a boolean, not '%s'."
+                % save_channels
+            )
+
+        if save_channels_format not in ["default", "jpeg", "png"]:
+            raise ValueError(
+                "The save_channels_style argument must be one of 'default', "
+                "'jpeg' or 'png', not '%s'." % save_channels_format
+            )
+        if save_channels_style not in ["color", "grayscale"]:
+            raise ValueError(
+                "The save_channels_style argument must be one of "
+                "'color' or 'grayscale', not '%s'." % save_channels_style
+            )
+
+        if not isinstance(scale, int):
+            raise TypeError("The scale argument must be an integer, not '%s'." % scale)
+
+        if style not in ["color", "grayscale"]:
+            raise ValueError(
+                "The style argument must be either 'color' or 'grayscale'."
+            )
+
+        return True
 
     def gcr(self, im, percentage):
         """
@@ -239,6 +292,51 @@ class Halftone(object):
 
             dots.append(half_tone)
         return dots
+
+    def save_channel_images(
+        self,
+        channel_images,
+        channels_style,
+        channels_format,
+        output_filename,
+        output_quality,
+    ):
+        """
+        Save the individual CMYK channels as separate images.
+        """
+
+        channel_names = (
+            ("c", "cyan"),
+            ("m", "magenta"),
+            ("y", "yellow"),
+            ("k", "black"),
+        )
+
+        f, extension = os.path.splitext(output_filename)
+
+        if channels_format == "jepg":
+            extension = ".jpg"
+        elif channels_format.startswith("png"):
+            extension = ".png"
+        # Else, keep the same as the input file.
+
+        for count, channel_img in enumerate(channel_images):
+            channel_filename = "%s_%s%s" % (
+                f,
+                channel_names[count][0],
+                extension,
+            )
+
+            i = ImageOps.invert(channel_img)
+
+            if channels_style == "color" and count < 3:
+                i = ImageOps.colorize(i, black=channel_names[count][1], white="white")
+
+            if extension == ".jpg":
+                # subsampling=0 seems to make them look crisper.
+                i.save(channel_filename, "JPEG", subsampling=0, quality=output_quality)
+            elif extension == ".png":
+                i.save(channel_filename, "PNG")
 
 
 if __name__ == "__main__":
