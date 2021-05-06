@@ -52,6 +52,12 @@ When saving the new image, this string will be added to the original filename. e
 
 Default: `"_halftoned"`
 
+### `output_quality`
+
+When saving any JPEG images, what quality to use. From 0 to 100. Pillow says to avoid anything over 95. Has no effect on non-JPEG images.
+
+Default: `75`
+
 ### `percentage`
 
 How much of the gray component to remove from the CMY channels and put in the K channel.
@@ -103,10 +109,11 @@ h.make(
     angles=[15, 75, 0, 45],
     antialias=True,
     filename_addition="_new",
+    output_quality=95,
     percentage=50,
     sample=5,
     save_channels=True,
-    save_channels_format="png",
+    save_channels_format="jpeg",
     save_channels_style="grayscale",
     scale=2,
     style="color"

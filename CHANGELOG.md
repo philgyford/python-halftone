@@ -3,6 +3,8 @@
 
 ## [Unreleased]
 
+* Added `output_quality` option.
+
 * Added `save_channels`, `save_channels_format` and `save_channels_style` options.
 
 * Bug fixes
