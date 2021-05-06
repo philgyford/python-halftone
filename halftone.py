@@ -31,7 +31,10 @@ class Halftone(object):
         angles=[0, 15, 30, 45],
         style="color",
         antialias=False,
-        save_channels=None,
+        output_quality=75,
+        save_channels=False,
+        save_channels_format="default",
+        save_channels_style="color",
     ):
         """
         Leave filename_addition empty to save the image in place.
@@ -45,16 +48,21 @@ class Halftone(object):
             angles: A list of 4 angles that each screen channel should be rotated by.
             style: 'color' or 'grayscale'.
             antialias: boolean.
-            save_channels: boolean. Also save the four separate CMYK channels as images?
+            output_quality: Integer, default 75. Only used when saving jpeg images.
+            save_channels: Boolean, whether to save the four separate channel images in
+                addition to the main image.
+            save_channels_format: "default", "jpeg", "png".
+            save_channels_style: "color" or "grayscale".
         """
-        f, e = os.path.splitext(self.path)
 
-        filename = "%s%s%s" % (f, filename_addition, e)
+        f, extension = os.path.splitext(self.path)
+
+        output_filename = "%s%s%s" % (f, filename_addition, extension)
 
         try:
             im = Image.open(self.path)
-        except IOError:
-            raise
+        except IOError as e:
+            raise Exception("Couldn't open source file '%s'" % (self.path)) from e
 
         if style == "grayscale":
             angles = angles[:1]
@@ -68,31 +76,64 @@ class Halftone(object):
             cmyk = self.gcr(im, percentage)
             channel_images = self.halftone(im, cmyk, sample, scale, angles, antialias)
 
-            if save_channels in ["color", "grayscale"]:
-                # Save the individual CMYK channels as separate images.
-                channel_names = (
-                    ("c", "cyan"),
-                    ("m", "magenta"),
-                    ("y", "yellow"),
-                    ("k", "black"),
+            if save_channels:
+
+                self.save_channel_images(
+                    channel_images,
+                    channels_style=save_channels_style,
+                    channels_format=save_channels_format,
+                    output_filename=output_filename,
+                    output_quality=output_quality,
                 )
-                for count, channel_img in enumerate(channel_images):
-                    channel_filename = "%s%s_%s%s" % (
-                        f,
-                        filename_addition,
-                        channel_names[count][0],
-                        e,
-                    )
-                    i = ImageOps.invert(channel_img)
-                    if save_channels == "color" and count < 3:
-                        i = ImageOps.colorize(
-                            i, black=channel_names[count][1], white="white"
-                        )
-                    i = i.convert("CMYK")
-                    i.save(channel_filename)
+
             new = Image.merge("CMYK", channel_images)
 
-        new.save(filename)
+        new.save(output_filename)
+
+    def save_channel_images(
+        self,
+        channel_images,
+        channels_style,
+        channels_format,
+        output_filename,
+        output_quality,
+    ):
+        """
+        Save the individual CMYK channels as separate images.
+        """
+
+        channel_names = (
+            ("c", "cyan"),
+            ("m", "magenta"),
+            ("y", "yellow"),
+            ("k", "black"),
+        )
+
+        f, extension = os.path.splitext(output_filename)
+
+        if channels_format == "jepg":
+            extension = ".jpg"
+        elif channels_format.startswith("png"):
+            extension = ".png"
+        # Else, keep the same as the input file.
+
+        for count, channel_img in enumerate(channel_images):
+            channel_filename = "%s_%s%s" % (
+                f,
+                channel_names[count][0],
+                extension,
+            )
+
+            i = ImageOps.invert(channel_img)
+
+            if channels_style == "color" and count < 3:
+                i = ImageOps.colorize(i, black=channel_names[count][1], white="white")
+
+            if extension == ".jpg":
+                # subsampling=0 seems to make them look crisper.
+                i.save(channel_filename, "JPEG", subsampling=0, quality=output_quality)
+            elif extension == ".png":
+                i.save(channel_filename, "PNG", transparency="white")
 
     def gcr(self, im, percentage):
         """

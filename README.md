@@ -66,9 +66,21 @@ Default: `10`
 
 ### `save_channels`
 
-Either `None`, `"color"` or `"grayscale"`. Whether to also save each of the four CMYK channels as separate images. If `None`, then this isn't done. If `save_channels="color"` four extra files will be saved, one per channel. If `save_channels="grayscale"`, then the same but each of those channel files will be grayscale. The files will have the color letter appended to the filename, like `puppy_halftoned_c.jpg` for the cyan channel. Has no effect if `style="grayscale"`.
+Whether to save the four CMYK channels as separate images, in addition to the combined halftoned image. Boolean. The files will have the color letter appended to the filename, like `puppy_halftoned_c.jpg` for the cyan channel. Only functions if the overall `style` argument is `"color"`.
 
-Default: `None`
+Default: `False`
+
+### `save_channels_format`
+
+Either `"default"`, `"jpeg"`, or `"png"`. If `save_channels` is `True` then what format should the four separate images be saved as? If `"default"` then it's the same as the original input image's format.
+
+Default: `"default"`
+
+### `save_channels_style`
+
+Either `"color"` or `"grayscale"`. If `save_channels` is `True` then whether the four separate images should be saved in color or grayscale. If the overall `style` argument is `"grayscale"` then the four CMYK channels will always be `"grayscale"`, no matter what this setting.
+
+Default: `"color"`
 
 ### `scale`
 
@@ -93,7 +105,9 @@ h.make(
     filename_addition="_new",
     percentage=50,
     sample=5,
-    save_channels="color",
+    save_channels=True,
+    save_channels_format="png",
+    save_channels_style="grayscale",
     scale=2,
     style="color"
 )
