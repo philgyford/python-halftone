@@ -133,7 +133,7 @@ class Halftone(object):
                 # subsampling=0 seems to make them look crisper.
                 i.save(channel_filename, "JPEG", subsampling=0, quality=output_quality)
             elif extension == ".png":
-                i.save(channel_filename, "PNG", transparency="white")
+                i.save(channel_filename, "PNG")
 
     def gcr(self, im, percentage):
         """
