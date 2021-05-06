@@ -54,7 +54,7 @@ Default: `"_halftoned"`
 
 ### `output_quality`
 
-When saving any JPEG images, what quality to use. From 0 to 100. Pillow says to avoid anything over 95. Has no effect on non-JPEG images.
+When saving any JPEG images, what quality to use. From `0` to `100`. Pillow says to avoid anything over `95`. Has no effect on non-JPEG images.
 
 Default: `75`
 
