@@ -8,13 +8,16 @@ Running it over large images, or with settings that create large images, can tak
 
 Also see [Clay Flannigan's halftone][clay] in case that suits your needs better.
 
+NOTE: Colors in the output files are darker in JPEG files compared to PNGs. This is something to do
+with color profiles and RGB/CMYK conversion that I don't understand.
+[Suggestions welcome on this Issue.][bug]
+
 [pillow]: http://pillow.readthedocs.io
 [so]: http://stackoverflow.com/questions/10572274/halftone-images-in-python/10575940#10575940
 [fr]: http://stackoverflow.com/users/1175101/fraxel
 [clay]: https://github.com/ClayFlannigan/halftone
+[bug]: https://github.com/philgyford/python-halftone/issues/7
 
-NOTE: Colors in the output files are darker in JPEG files compared to PNGs. This is something to do
-with color profiles and RGB/CMYK conversion that I don't understand. 
 
 ## Basic usage
 
@@ -26,6 +29,7 @@ h.make()
 ```
 
 Will create a new image at `/path/to/myimage_halftoned.jpg`, using the default settings.
+
 
 ## Options
 
