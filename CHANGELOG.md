@@ -3,6 +3,11 @@
 
 ## [Unreleased]
 
+* None
+
+
+## [2.1.0] - 2021-05-07
+
 * Added `output_format` and `output_quality` options.
 
 * Added `save_channels`, `save_channels_format` and `save_channels_style` options.
