@@ -353,7 +353,9 @@ class Halftone(object):
 
             if extension == ".jpg":
                 # subsampling=0 seems to make them look crisper.
-                i.save(channel_filename, "JPEG", subsampling=0, quality=output_quality)
+                i.convert("CMYK").save(
+                    channel_filename, "JPEG", subsampling=0, quality=output_quality
+                )
             elif extension == ".png":
                 i.save(channel_filename, "PNG")
 

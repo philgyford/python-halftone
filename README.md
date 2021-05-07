@@ -13,6 +13,9 @@ Also see [Clay Flannigan's halftone][clay] in case that suits your needs better.
 [fr]: http://stackoverflow.com/users/1175101/fraxel
 [clay]: https://github.com/ClayFlannigan/halftone
 
+NOTE: Colors in the output files are darker in JPEG files compared to PNGs. This is something to do
+with color profiles and RGB/CMYK conversion that I don't understand. 
+
 ## Basic usage
 
 ```python
@@ -115,6 +118,7 @@ h.make(
     angles=[15, 75, 0, 45],
     antialias=True,
     filename_addition="_new",
+    output_format="jpeg",
     output_quality=95,
     percentage=50,
     sample=5,
