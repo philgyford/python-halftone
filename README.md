@@ -52,6 +52,12 @@ When saving the new image, this string will be added to the original filename. e
 
 Default: `"_halftoned"`
 
+### `output_format`
+
+Either `"default"`, `"jpeg"`, or `"png"`. What format should the halftone file be saved as? If `"default"` then it's the same as the original input image's format.
+
+Default: `"default"`
+
 ### `output_quality`
 
 When saving any JPEG images, what quality to use. From `0` to `100`. Pillow says to avoid anything over `95`. Has no effect on non-JPEG images.

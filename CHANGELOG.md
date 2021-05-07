@@ -3,7 +3,7 @@
 
 ## [Unreleased]
 
-* Added `output_quality` option.
+* Added `output_format` and `output_quality` options.
 
 * Added `save_channels`, `save_channels_format` and `save_channels_style` options.
 

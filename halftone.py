@@ -4,8 +4,6 @@ import sys
 from PIL import Image, ImageDraw, ImageOps, ImageStat
 
 """
-v2.1.0
-
 Class: Halftone( path )
 Usage:
     import halftone
@@ -33,6 +31,7 @@ class Halftone(object):
         angles=[0, 15, 30, 45],
         style="color",
         antialias=False,
+        output_format="default",
         output_quality=75,
         save_channels=False,
         save_channels_format="default",
@@ -50,6 +49,7 @@ class Halftone(object):
             angles: A list of 4 angles that each screen channel should be rotated by.
             style: 'color' or 'grayscale'.
             antialias: boolean.
+            output_format: "default", "jpeg", "png".
             output_quality: Integer, default 75. Only used when saving jpeg images.
             save_channels: Boolean, whether to save the four separate channel images in
                 addition to the main image.
@@ -60,6 +60,7 @@ class Halftone(object):
         self.check_arguments(
             angles=angles,
             antialias=antialias,
+            output_format=output_format,
             output_quality=output_quality,
             percentage=percentage,
             sample=sample,
@@ -71,6 +72,12 @@ class Halftone(object):
         )
 
         f, extension = os.path.splitext(self.path)
+
+        if output_format == "jpeg":
+            extension = ".jpg"
+        elif output_format.startswith("png"):
+            extension = ".png"
+        # Else, keep the same as the input file.
 
         output_filename = "%s%s%s" % (f, str(filename_addition), extension)
 
@@ -103,12 +110,16 @@ class Halftone(object):
 
             new = Image.merge("CMYK", channel_images)
 
-        new.save(output_filename)
+        if extension == ".jpg":
+            new.save(output_filename, "JPEG", subsampling=0, quality=output_quality)
+        elif extension == ".png":
+            new.convert("RGB").save(output_filename, "PNG")
 
     def check_arguments(
         self,
         angles,
         antialias,
+        output_format,
         output_quality,
         percentage,
         sample,
@@ -141,6 +152,12 @@ class Halftone(object):
                 "The antialias argument must be a boolean, not '%s'." % antialias
             )
 
+        if output_format not in ["default", "jpeg", "png"]:
+            raise ValueError(
+                "The output_format argument must be one of 'default', "
+                "'jpeg' or 'png', not '%s'." % save_channels_format
+            )
+
         if not isinstance(output_quality, int):
             raise TypeError(
                 "The output_quality argument must be an integer, not '%s'."
@@ -171,7 +188,7 @@ class Halftone(object):
 
         if save_channels_format not in ["default", "jpeg", "png"]:
             raise ValueError(
-                "The save_channels_style argument must be one of 'default', "
+                "The save_channels_format argument must be one of 'default', "
                 "'jpeg' or 'png', not '%s'." % save_channels_format
             )
         if save_channels_style not in ["color", "grayscale"]:
@@ -316,7 +333,7 @@ class Halftone(object):
 
         f, extension = os.path.splitext(output_filename)
 
-        if channels_format == "jepg":
+        if channels_format == "jpeg":
             extension = ".jpg"
         elif channels_format.startswith("png"):
             extension = ".png"
