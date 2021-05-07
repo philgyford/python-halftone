@@ -4,6 +4,8 @@ import sys
 from PIL import Image, ImageDraw, ImageOps, ImageStat
 
 """
+v2.1.0
+
 Class: Halftone( path )
 Usage:
     import halftone
