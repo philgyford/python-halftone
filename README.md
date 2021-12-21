@@ -43,7 +43,7 @@ The full list of options:
 
 ### `angles`
 
-A list of 4 angles, in degrees, that each channel (CMYK, in that order) should be rotated by. If `style="grayscale"` only the first angle is used. Experimenting with different angles can increase or reduce moiré patterns. [More on screen angles.](http://the-print-guide.blogspot.co.uk/2009/05/halftone-screen-angles.html)
+A list of angles, in degrees, that each channel should be rotated by. If `style="color"` then 4 angles, one per channel (CMYK, in that order) are required. If `style="grayscale"` only 1 angle is required; any extra are ignored. Experimenting with different angles can increase or reduce moiré patterns. [More on screen angles.](http://the-print-guide.blogspot.co.uk/2009/05/halftone-screen-angles.html)
 
 Default: `[0, 15, 30, 45]`
 
@@ -166,7 +166,7 @@ h.make(angles=[15, 45, 0, 75])
 Reducing the sample size and increasing the scale (to increase output detail).
 
 ```python
-im.make(sample=5, scale=2)
+h.make(sample=5, scale=2)
 ```
 
 ![Image of dog with smaller sample size](examples/sample_scale.jpg?raw=True)
@@ -176,7 +176,7 @@ im.make(sample=5, scale=2)
 With antialiased circles.
 
 ```python
-im.make(antialias=True)
+h.make(antialias=True)
 ```
 
 ![Antialiased image of dog](examples/antialiased.jpg?raw=True)
@@ -186,7 +186,7 @@ im.make(antialias=True)
 Black and white, setting the angle to 45 (the default angle would be 0, resulting in circles being in rows and columns).
 
 ```python
-im.make(style="grayscale", angles=[45])
+h.make(style="grayscale", angles=[45])
 ```
 
 ![Grayscale image of dog](examples/grayscale.jpg?raw=True)

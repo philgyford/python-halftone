@@ -46,7 +46,8 @@ class Halftone(object):
             percentage: How much of the gray component to remove from the CMY
                 channels and put in the K channel.
             filename_addition: What to add to the filename (before the extension).
-            angles: A list of 4 angles that each screen channel should be rotated by.
+            angles: A list of angles that each screen channel should be rotated by.
+                Should be 4 integers when style is 'color', at least 1 for 'grayscale'.
             style: 'color' or 'grayscale'.
             antialias: boolean.
             output_format: "default", "jpeg", "png".
@@ -135,15 +136,26 @@ class Halftone(object):
             raise TypeError(
                 "The angles argument must be a list of 4 integers, not '%s'." % angles
             )
-        if len(angles) != 4:
-            raise ValueError(
-                "The angles argument must be a list of 4 integers, but it has %s."
-                % len(angles)
-            )
+
+        if style == "grayscale":
+            if len(angles) < 1:
+                raise ValueError(
+                    "The angles argument must be a list of at least 1 integer when "
+                    "style is 'grayscale', but it has %s."
+                    % len(angles)
+                )
+        else:
+            if len(angles) != 4:
+                raise ValueError(
+                    "The angles argument must be a list of 4 integers when "
+                    "style is 'color', but it has %s."
+                    % len(angles)
+                )
+
         for a in angles:
             if not isinstance(a, int):
                 raise ValueError(
-                    "All four elements of the angles list must be integers, "
+                    "All elements of the angles list must be integers, "
                     "but it is %s." % angles
                 )
 
